@@ -4,6 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { CbtModule } from './cbt/cbt.module';
 import { CommonModule } from './common/common.module';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
+import { RateLimitMiddleware } from './common/middleware/rate-limit.middleware';
 import { CronModule } from './cron/cron.module';
 import { DreamsInterpretationModule } from './dreams-interpretation/dreams-interpretation.module';
 import { FriendsRankingModule } from './friends-ranking/friends-ranking.module';
@@ -35,6 +36,6 @@ import { UserModule } from './user/user.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(RequestLoggerMiddleware).forRoutes('*');
+    consumer.apply(RequestLoggerMiddleware, RateLimitMiddleware).forRoutes('*');
   }
 }

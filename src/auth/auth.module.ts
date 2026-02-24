@@ -5,7 +5,12 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
-  imports: [JwtModule.register({ secret: 'somni-secret', signOptions: { expiresIn: '7d' } })],
+  imports: [
+    JwtModule.register({
+      secret: process.env.JWT_ACCESS_SECRET ?? 'local-dev-access-secret',
+      signOptions: { expiresIn: process.env.JWT_ACCESS_TTL ?? '15m' },
+    }),
+  ],
   controllers: [AuthController],
   providers: [AuthService, JwtAuthGuard],
   exports: [JwtModule, JwtAuthGuard],

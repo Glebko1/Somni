@@ -4,8 +4,13 @@ export interface UserEntity {
   id: string;
   email: string;
   password: string;
+  refreshTokenHash?: string;
   name: string;
   role: UserRole;
+  consentGivenAt?: Date;
+  analyticsOptOut: boolean;
+  healthSyncEnabled: boolean;
+  lastActiveAt: Date;
   createdAt: Date;
 }
 
