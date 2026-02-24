@@ -9,6 +9,7 @@ import { DreamsInterpretationModule } from './dreams-interpretation/dreams-inter
 import { FriendsRankingModule } from './friends-ranking/friends-ranking.module';
 import { GamificationModule } from './gamification/gamification.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { PaywallModule } from './paywall/paywall.module';
 import { SleepModule } from './sleep/sleep.module';
 import { SomnikModule } from './somnik/somnik.module';
 import { SubscriptionModule } from './subscription/subscription.module';
@@ -28,6 +29,7 @@ import { UserModule } from './user/user.module';
     FriendsRankingModule,
     DreamsInterpretationModule,
     NotificationsModule,
+    PaywallModule,
     CronModule,
   ],
 })
