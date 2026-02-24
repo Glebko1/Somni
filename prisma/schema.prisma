@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  password      String
+  name          String
+  role          String         @default("user")
+  createdAt     DateTime       @default(now())
+  sleepSessions SleepSession[]
+  cbtEntries    CbtEntry[]
+  rewards       Reward[]
+  conversations SomnikMessage[]
+  subscriptions Subscription[]
+  dreams        Dream[]
+  notifications Notification[]
+}
+
+model SleepSession {
+  id               String   @id @default(uuid())
+  userId           String
+  sleepStart       DateTime
+  wakeUp           DateTime
+  interruptions    Int
+  deepSleepMinutes Int
+  remMinutes       Int
+  efficiency       Float
+  sleepWindowStart String
+  sleepWindowEnd   String
+  createdAt        DateTime @default(now())
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CbtEntry {
+  id             String   @id @default(uuid())
+  userId         String
+  trigger        String
+  thought        String
+  reframedThought String
+  moodBefore     Int
+  moodAfter      Int
+  createdAt      DateTime @default(now())
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Reward {
+  id        String   @id @default(uuid())
+  userId    String
+  source    String
+  points    Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SomnikMessage {
+  id        String   @id @default(uuid())
+  userId    String
+  message   String
+  answer    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id         String   @id @default(uuid())
+  userId     String
+  plan       String
+  validUntil DateTime
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Friendship {
+  id        String   @id @default(uuid())
+  userId    String
+  friendId  String
+  createdAt DateTime @default(now())
+}
+
+model Dream {
+  id             String   @id @default(uuid())
+  userId         String
+  dreamText      String
+  sentiment      String
+  interpretation String
+  tags           String[]
+  createdAt      DateTime @default(now())
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String
+  message     String
+  read        Boolean  @default(false)
+  scheduledAt DateTime
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
