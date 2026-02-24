@@ -1,16 +1,24 @@
-import { useCallback } from 'react';
-import { Button } from 'react-native';
+import { useCallback, useEffect } from 'react';
+import { Button, View } from 'react-native';
 
-import { fetchHealthData, syncHealthMetrics } from './services';
+import { fetchHealthData, syncHealthMetrics, syncHealthMetricsNow } from './services';
+import { registerHealthBackgroundSyncTask } from './syncEngine';
 import { FeatureScreen } from '@/shared/ui/FeatureScreen';
 
 export function HealthScreen() {
   const load = useCallback(() => fetchHealthData(), []);
 
+  useEffect(() => {
+    void registerHealthBackgroundSyncTask();
+  }, []);
+
   return (
     <>
       <FeatureScreen title="Health Sync" load={load} />
-      <Button title="Run health sync" onPress={() => void syncHealthMetrics()} />
+      <View>
+        <Button title="Run battery-optimized sync" onPress={() => void syncHealthMetrics()} />
+        <Button title="Run immediate sync" onPress={() => void syncHealthMetricsNow()} />
+      </View>
     </>
   );
 }
