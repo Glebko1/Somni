@@ -10,13 +10,16 @@ import { HealthSyncPayload } from './types';
 const HEALTH_SYNC_TASK = 'somni-health-sync-task';
 const MORNING_SYNC_INTERVAL_SECONDS = 30 * 60;
 const DAY_SYNC_INTERVAL_SECONDS = 3 * 60 * 60;
+const LOW_END_MULTIPLIER = 1.5;
 
 let lastSyncAt = 0;
+let lowEndDeviceMode = false;
 
 function getAdaptiveIntervalSeconds(date = new Date()) {
   const hour = date.getHours();
   const isMorningWindow = hour >= 6 && hour <= 11;
-  return isMorningWindow ? MORNING_SYNC_INTERVAL_SECONDS : DAY_SYNC_INTERVAL_SECONDS;
+  const baseline = isMorningWindow ? MORNING_SYNC_INTERVAL_SECONDS : DAY_SYNC_INTERVAL_SECONDS;
+  return lowEndDeviceMode ? Math.round(baseline * LOW_END_MULTIPLIER) : baseline;
 }
 
 function shouldSkipSync(nowMs: number, minIntervalSeconds: number) {
@@ -50,6 +53,10 @@ export async function runHealthSync(batteryOptimized = true): Promise<void> {
   }
 
   lastSyncAt = nowMs;
+}
+
+export function setHealthSyncLowEndMode(enabled: boolean) {
+  lowEndDeviceMode = enabled;
 }
 
 TaskManager.defineTask(HEALTH_SYNC_TASK, async () => {
