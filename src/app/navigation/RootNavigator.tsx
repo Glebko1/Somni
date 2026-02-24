@@ -9,6 +9,7 @@ import { GamificationScreen } from '@/features/gamification/screens';
 import { HealthScreen } from '@/features/health/screens';
 import { OnboardingScreen } from '@/features/onboarding/screens';
 import { PaywallScreen } from '@/features/paywall/screens';
+import { RelaxGameScreen } from '@/features/relax-game/screens';
 import { RemindersScreen } from '@/features/reminders/screens';
 import { RewardsScreen } from '@/features/rewards/screens';
 import { SleepDiaryScreen } from '@/features/sleepDiary/screens';
@@ -36,6 +37,7 @@ export function RootNavigator() {
         <Stack.Screen name="Rewards" component={RewardsScreen} />
         <Stack.Screen name="Friends" component={FriendsScreen} />
         <Stack.Screen name="Reminders" component={RemindersScreen} />
+        <Stack.Screen name="RelaxGame" component={RelaxGameScreen} options={{ title: 'Relax Mini Game' }} />
         <Stack.Screen name="Paywall" component={PaywallScreen} />
       </Stack.Navigator>
     </NavigationContainer>
