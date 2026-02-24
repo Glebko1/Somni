@@ -50,12 +50,45 @@ export interface SomnikConversation {
   createdAt: Date;
 }
 
+export type SubscriptionPlan = 'free' | 'plus' | 'premium' | 'enterprise';
+
 export interface SubscriptionRecord {
   id: string;
   userId: string;
-  plan: 'free' | 'plus' | 'premium';
+  plan: SubscriptionPlan;
   validUntil: Date;
   active: boolean;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
+  trialStartedAt?: Date;
+  trialEndsAt?: Date;
+  createdAt: Date;
+}
+
+export interface SubscriptionUsageEvent {
+  id: string;
+  userId: string;
+  feature: string;
+  action: string;
+  units: number;
+  createdAt: Date;
+}
+
+export interface B2BLicense {
+  id: string;
+  organizationName: string;
+  plan: 'business' | 'enterprise';
+  seats: number;
+  seatAssignments: string[];
+  validUntil: Date;
+  createdAt: Date;
+}
+
+export interface PaywallExperimentImpression {
+  id: string;
+  userId: string;
+  variant: 'control' | 'social-proof';
+  converted: boolean;
   createdAt: Date;
 }
 
