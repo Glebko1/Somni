@@ -23,11 +23,15 @@ export class AuthService {
       password: this.hash(dto.password),
       name: dto.name,
       role: 'user' as const,
+      analyticsOptOut: false,
+      healthSyncEnabled: true,
+      consentGivenAt: new Date(),
+      lastActiveAt: new Date(),
       createdAt: new Date(),
     };
 
     this.store.users.push(user);
-    return this.issueToken(user.id, user.email);
+    return this.issueTokenPair(user.id, user.email);
   }
 
   login(dto: LoginDto) {
@@ -35,12 +39,38 @@ export class AuthService {
     if (!user || user.password !== this.hash(dto.password)) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    return this.issueToken(user.id, user.email);
+    user.lastActiveAt = new Date();
+    return this.issueTokenPair(user.id, user.email);
   }
 
-  private issueToken(userId: string, email: string) {
+  refreshToken(rawRefreshToken: string) {
+    const hashedRefreshToken = this.hash(rawRefreshToken);
+    const user = this.store.users.find((candidate) => candidate.refreshTokenHash === hashedRefreshToken);
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    user.lastActiveAt = new Date();
+    return this.issueTokenPair(user.id, user.email);
+  }
+
+  private issueTokenPair(userId: string, email: string) {
     const accessToken = this.jwtService.sign({ sub: userId, email });
-    return { accessToken, tokenType: 'Bearer' };
+    const refreshToken = this.jwtService.sign(
+      { sub: userId, email, type: 'refresh' },
+      {
+        secret: process.env.JWT_REFRESH_SECRET ?? 'local-dev-refresh-secret',
+        expiresIn: process.env.JWT_REFRESH_TTL ?? '30d',
+      },
+    );
+    const user = this.store.users.find((candidate) => candidate.id === userId);
+    if (user) {
+      user.refreshTokenHash = this.hash(refreshToken);
+      user.lastActiveAt = new Date();
+    }
+
+    return { accessToken, refreshToken, tokenType: 'Bearer' };
   }
 
   private hash(value: string): string {

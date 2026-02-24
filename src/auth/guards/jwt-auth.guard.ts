@@ -20,7 +20,9 @@ export class JwtAuthGuard implements CanActivate {
 
     const token = auth.slice('Bearer '.length);
     try {
-      request.user = this.jwtService.verify(token);
+      request.user = this.jwtService.verify(token, {
+        secret: process.env.JWT_ACCESS_SECRET ?? 'local-dev-access-secret',
+      });
       return true;
     } catch {
       throw new UnauthorizedException('Invalid token');

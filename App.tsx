@@ -5,6 +5,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { RootNavigator } from '@/app/navigation/RootNavigator';
 import { useBootstrap } from '@/shared/hooks/useBootstrap';
 import { palette } from '@/shared/theme/palette';
+import { AppErrorBoundary } from '@/shared/ui/AppErrorBoundary';
 import { useAppStore } from '@/store/appStore';
 
 export default function App() {
@@ -19,5 +20,9 @@ export default function App() {
     );
   }
 
-  return <RootNavigator />;
+  return (
+    <AppErrorBoundary>
+      <RootNavigator />
+    </AppErrorBoundary>
+  );
 }
