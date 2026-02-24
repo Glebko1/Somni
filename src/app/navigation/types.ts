@@ -15,4 +15,5 @@ export type RootStackParamList = {
   Dreams: undefined;
   Reminders: undefined;
   Paywall: undefined;
+  RelaxGame: undefined;
 };
