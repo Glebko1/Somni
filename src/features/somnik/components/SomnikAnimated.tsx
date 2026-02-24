@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from 'react';
+import { memo, useMemo, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -41,7 +41,7 @@ const REACTION_FACE: Record<SomnikReaction, string> = {
   sad: '﹏'
 };
 
-export function SomnikAnimated({
+function SomnikAnimatedComponent({
   stage,
   reaction,
   sleepQualityPercent,
@@ -69,6 +69,8 @@ export function SomnikAnimated({
     transform: [{ scale: scale.value }, { translateY: bob.value }]
   }));
 
+  const clampedSleepQuality = useMemo(() => Math.min(100, Math.max(0, sleepQualityPercent)), [sleepQualityPercent]);
+
   return (
     <View style={styles.wrapper}>
       <Animated.View
@@ -90,10 +92,10 @@ export function SomnikAnimated({
       <View style={styles.widgetCard}>
         <Text style={styles.widgetTitle}>Sleep Quality</Text>
         <View style={styles.progressTrack}>
-          <View style={[styles.progressFill, { width: `${sleepQualityPercent}%` }]} />
+          <View style={[styles.progressFill, { width: `${clampedSleepQuality}%` }]} />
         </View>
         <Text style={styles.widgetValue}>
-          {sleepQualityPercent}% · {sleepQualityLabel.toUpperCase()}
+          {clampedSleepQuality}% · {sleepQualityLabel.toUpperCase()}
         </Text>
         <Text style={styles.widgetMeta}>
           Form: {stage} · Skin: {skinName}
@@ -102,6 +104,8 @@ export function SomnikAnimated({
     </View>
   );
 }
+
+export const SomnikAnimated = memo(SomnikAnimatedComponent);
 
 const styles = StyleSheet.create({
   wrapper: {
