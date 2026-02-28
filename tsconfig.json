@@ -2,7 +2,9 @@
   "compilerOptions": {
     "target": "ES2021",
     "module": "ESNext",
-    "lib": ["ES2021"],
+    "lib": [
+      "ES2021"
+    ],
     "jsx": "react-jsx",
     "moduleResolution": "Bundler",
     "strict": true,
@@ -11,9 +13,19 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": [
+        "src/*"
+      ]
     },
-    "types": ["react", "react-native"]
+    "types": [
+      "react",
+      "react-native"
+    ]
   },
-  "include": ["src", "App.tsx", "index.js"]
+  "include": [
+    "src",
+    "App.tsx",
+    "index.js"
+  ],
+  "extends": "expo/tsconfig.base"
 }
