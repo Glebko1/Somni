@@ -4,6 +4,7 @@ import {
   DreamEntry,
   Friendship,
   B2BLicense,
+  InsomniaSleepLog,
   NotificationEntity,
   PaywallExperimentImpression,
   RewardTransaction,
@@ -11,6 +12,7 @@ import {
   SomnikConversation,
   SubscriptionRecord,
   SubscriptionUsageEvent,
+  TriageAssessment,
   UserEntity,
 } from './types/entities';
 
@@ -18,6 +20,7 @@ import {
 export class DataStoreService {
   users: UserEntity[] = [];
   sleepSessions: SleepSession[] = [];
+  insomniaSleepLogs: InsomniaSleepLog[] = [];
   cbtEntries: CbtEntry[] = [];
   rewardTransactions: RewardTransaction[] = [];
   somnikConversations: SomnikConversation[] = [];
@@ -28,4 +31,5 @@ export class DataStoreService {
   friendships: Friendship[] = [];
   dreams: DreamEntry[] = [];
   notifications: NotificationEntity[] = [];
+  triageAssessments: TriageAssessment[] = [];
 }
