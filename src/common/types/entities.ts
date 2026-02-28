@@ -28,6 +28,64 @@ export interface SleepSession {
   createdAt: Date;
 }
 
+export interface InsomniaSleepLog {
+  id: string;
+  userId: string;
+  bedtime: Date;
+  estimatedSleepTime: Date;
+  sleepOnsetLatency: number;
+  awakeningsCount: number;
+  wakeAfterSleepOnset: number;
+  earlyFinalAwakening: number;
+  outOfBedTime: Date;
+  totalSleepTime: number;
+  timeInBed: number;
+  sleepEfficiency: number;
+  preSleepAnxiety: number;
+  daytimeSleepiness: number;
+  mood: number;
+  caffeineAfter14: boolean;
+  alcoholEvening: boolean;
+  exerciseTime?: string;
+  morningLightMinutes: number;
+  nightUrination: number;
+  temperatureRoom: number;
+  deviceUseBeforeSleep: boolean;
+  createdAt: Date;
+}
+
+export type TechniqueCategory =
+  | 'cognitive'
+  | 'somatic'
+  | 'breathing'
+  | 'visualization'
+  | 'behavioral'
+  | 'nutrition'
+  | 'anti-pattern';
+
+export interface InsomniaTechnique {
+  name: string;
+  category: TechniqueCategory;
+  tags: string[];
+  contraindications: string[];
+  instructionText: string;
+  duration: string;
+  recommendedFor: string[];
+  avoidanceConditions: string[];
+}
+
+export interface TriageAssessment {
+  id: string;
+  userId: string;
+  phq9Score: number;
+  suicidalIdeation: boolean;
+  apneaRisk: boolean;
+  severeWorsening: boolean;
+  referralRequired: boolean;
+  triggers: string[];
+  createdAt: Date;
+}
+
 export interface CbtEntry {
   id: string;
   userId: string;

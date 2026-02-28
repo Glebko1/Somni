@@ -9,6 +9,7 @@ import { CronModule } from './cron/cron.module';
 import { DreamsInterpretationModule } from './dreams-interpretation/dreams-interpretation.module';
 import { FriendsRankingModule } from './friends-ranking/friends-ranking.module';
 import { GamificationModule } from './gamification/gamification.module';
+import { InsomniaModule } from './insomnia/insomnia.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { PaywallModule } from './paywall/paywall.module';
 import { SleepModule } from './sleep/sleep.module';
@@ -23,6 +24,7 @@ import { UserModule } from './user/user.module';
     AuthModule,
     UserModule,
     SleepModule,
+    InsomniaModule,
     CbtModule,
     GamificationModule,
     SomnikModule,

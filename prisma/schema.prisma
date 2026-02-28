@@ -21,6 +21,8 @@ model User {
   subscriptions Subscription[]
   dreams        Dream[]
   notifications Notification[]
+  insomniaLogs   InsomniaSleepLog[]
+  triageAssessments TriageAssessment[]
 }
 
 model SleepSession {
@@ -105,4 +107,49 @@ model Notification {
   scheduledAt DateTime
   createdAt   DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+model InsomniaSleepLog {
+  id                    String   @id @default(uuid())
+  userId                String
+  bedtime               DateTime
+  estimatedSleepTime    DateTime
+  sleepOnsetLatency     Int
+  awakeningsCount       Int
+  wakeAfterSleepOnset   Int
+  earlyFinalAwakening   Int
+  outOfBedTime          DateTime
+  totalSleepTime        Int
+  timeInBed             Int
+  sleepEfficiency       Float
+  preSleepAnxiety       Int
+  daytimeSleepiness     Int
+  mood                  Int
+  caffeineAfter14       Boolean
+  alcoholEvening        Boolean
+  exerciseTime          String?
+  morningLightMinutes   Int
+  nightUrination        Int
+  temperatureRoom       Float
+  deviceUseBeforeSleep  Boolean
+  createdAt             DateTime @default(now())
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model TriageAssessment {
+  id               String   @id @default(uuid())
+  userId           String
+  phq9Score        Int
+  suicidalIdeation Boolean
+  apneaRisk        Boolean
+  severeWorsening  Boolean
+  referralRequired Boolean
+  triggers         String[]
+  createdAt        DateTime @default(now())
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }
