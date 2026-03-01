@@ -1,6 +1,10 @@
-import { IsIn, IsString } from 'class-validator';
+import { IsIn, IsString, MinLength } from 'class-validator';
 
 export class StripeWebhookDto {
+  @IsString()
+  @MinLength(8)
+  eventId!: string;
+
   @IsIn(['customer.subscription.created', 'customer.subscription.updated', 'customer.subscription.deleted'])
   type!: 'customer.subscription.created' | 'customer.subscription.updated' | 'customer.subscription.deleted';
 

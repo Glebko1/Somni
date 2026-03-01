@@ -2,8 +2,10 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Request, Response, NextFunction } from 'express';
 import { AppModule } from './app.module';
+import { validateEnvironment } from './common/env.validation';
 
 async function bootstrap() {
+  validateEnvironment();
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   const corsWhitelist = (process.env.CORS_ORIGINS ?? 'http://localhost:8081').split(',');

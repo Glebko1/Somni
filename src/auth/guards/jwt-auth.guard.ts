@@ -7,6 +7,12 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
+type AccessTokenPayload = {
+  sub: string;
+  email: string;
+  type?: 'access' | 'refresh';
+};
+
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
@@ -20,9 +26,14 @@ export class JwtAuthGuard implements CanActivate {
 
     const token = auth.slice('Bearer '.length);
     try {
-      request.user = this.jwtService.verify(token, {
+      const payload = this.jwtService.verify<AccessTokenPayload>(token, {
         secret: process.env.JWT_ACCESS_SECRET ?? 'local-dev-access-secret',
       });
+      if (payload.type && payload.type !== 'access') {
+        throw new UnauthorizedException('Invalid token type');
+      }
+
+      request.user = { sub: payload.sub };
       return true;
     } catch {
       throw new UnauthorizedException('Invalid token');
