@@ -14,6 +14,7 @@ import {
   SubscriptionUsageEvent,
   TriageAssessment,
   UserEntity,
+  ProcessedWebhookEvent,
 } from './types/entities';
 
 @Injectable()
@@ -32,4 +33,5 @@ export class DataStoreService {
   dreams: DreamEntry[] = [];
   notifications: NotificationEntity[] = [];
   triageAssessments: TriageAssessment[] = [];
+  processedWebhookEvents: ProcessedWebhookEvent[] = [];
 }

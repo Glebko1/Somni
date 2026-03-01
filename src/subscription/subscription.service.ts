@@ -1,5 +1,5 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { randomUUID } from 'crypto';
+import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { createHmac, randomUUID, timingSafeEqual } from 'crypto';
 import { DataStoreService } from '../common/data-store.service';
 import { SubscriptionPlan } from '../common/types/entities';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
@@ -62,18 +62,35 @@ export class SubscriptionService {
     };
   }
 
-  processStripeWebhook(payload: {
-    type: 'customer.subscription.created' | 'customer.subscription.updated' | 'customer.subscription.deleted';
-    userId: string;
-    stripeSubscriptionId: string;
-    stripeCustomerId: string;
-    plan: SubscriptionPlan;
-  }) {
+  processStripeWebhook(
+    payload: {
+      eventId: string;
+      type: 'customer.subscription.created' | 'customer.subscription.updated' | 'customer.subscription.deleted';
+      userId: string;
+      stripeSubscriptionId: string;
+      stripeCustomerId: string;
+      plan: SubscriptionPlan;
+    },
+    signature: string | undefined,
+  ) {
+    this.assertWebhookSignature(payload, signature);
+
+    const alreadyProcessed = this.store.processedWebhookEvents.some(
+      (event) => event.source === 'stripe' && event.id === payload.eventId,
+    );
+    if (alreadyProcessed) {
+      return { handled: true, status: 'duplicate' as const };
+    }
     const now = new Date();
     const existing = this.current(payload.userId);
 
     if (payload.type === 'customer.subscription.deleted') {
       if (existing) existing.active = false;
+      this.store.processedWebhookEvents.push({
+        id: payload.eventId,
+        source: 'stripe',
+        receivedAt: now,
+      });
       return { handled: true, status: 'cancelled' as const };
     }
 
@@ -92,6 +109,11 @@ export class SubscriptionService {
       s.userId === payload.userId ? { ...s, active: false } : s,
     );
     this.store.subscriptions.push(next);
+    this.store.processedWebhookEvents.push({
+      id: payload.eventId,
+      source: 'stripe',
+      receivedAt: now,
+    });
 
     return { handled: true, status: 'active' as const, subscriptionId: next.id };
   }
@@ -234,6 +256,23 @@ export class SubscriptionService {
       }, {}),
       generatedAt: new Date().toISOString(),
     };
+  }
+
+
+  private assertWebhookSignature(payload: { eventId: string; userId: string; stripeSubscriptionId: string }, signature: string | undefined) {
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? 'dev-stripe-webhook-secret';
+    if (!signature) {
+      throw new UnauthorizedException('Missing webhook signature');
+    }
+
+    const content = `${payload.eventId}.${payload.userId}.${payload.stripeSubscriptionId}`;
+    const expectedSignature = createHmac('sha256', webhookSecret).update(content).digest('hex');
+    const expected = Buffer.from(expectedSignature, 'hex');
+    const provided = Buffer.from(signature, 'hex');
+
+    if (expected.length !== provided.length || !timingSafeEqual(expected, provided)) {
+      throw new UnauthorizedException('Invalid webhook signature');
+    }
   }
 
   private buildTrialEnd(now: Date) {

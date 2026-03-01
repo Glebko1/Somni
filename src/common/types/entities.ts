@@ -4,6 +4,7 @@ export interface UserEntity {
   id: string;
   email: string;
   password: string;
+  passwordSalt: string;
   refreshTokenHash?: string;
   name: string;
   role: UserRole;
@@ -12,6 +13,12 @@ export interface UserEntity {
   healthSyncEnabled: boolean;
   lastActiveAt: Date;
   createdAt: Date;
+}
+
+export interface ProcessedWebhookEvent {
+  id: string;
+  source: 'stripe';
+  receivedAt: Date;
 }
 
 export interface SleepSession {

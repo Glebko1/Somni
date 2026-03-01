@@ -9,7 +9,7 @@ export class UserService {
   getProfile(userId: string) {
     const user = this.store.users.find((u) => u.id === userId);
     if (!user) throw new NotFoundException('User not found');
-    const { password, ...safe } = user;
+    const { password, passwordSalt, refreshTokenHash, ...safe } = user;
     return safe;
   }
 
@@ -17,7 +17,7 @@ export class UserService {
     const user = this.store.users.find((u) => u.id === userId);
     if (!user) throw new NotFoundException('User not found');
     if (dto.name) user.name = dto.name;
-    const { password, ...safe } = user;
+    const { password, passwordSalt, refreshTokenHash, ...safe } = user;
     return safe;
   }
 
@@ -25,7 +25,7 @@ export class UserService {
     const user = this.store.users.find((u) => u.id === userId);
     if (!user) throw new NotFoundException('User not found');
 
-    const withoutSecrets = { ...user, password: undefined, refreshTokenHash: undefined };
+    const withoutSecrets = { ...user, password: undefined, passwordSalt: undefined, refreshTokenHash: undefined };
 
     return {
       profile: withoutSecrets,
